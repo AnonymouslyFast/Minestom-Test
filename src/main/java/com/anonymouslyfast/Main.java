@@ -7,6 +7,7 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.InstanceManager;
+import net.minestom.server.instance.LightingChunk;
 import net.minestom.server.instance.block.Block;
 
 public class Main {
@@ -29,6 +30,9 @@ public class Main {
             unit.modifier().fillHeight(1, 3, Block.DIRT);
             unit.modifier().fillHeight(3, 4, Block.GRASS_BLOCK);
         });
+
+        // Adding lightning
+        instanceContainer.setChunkSupplier(LightingChunk::new);
 
         // Event to for player spawning
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();

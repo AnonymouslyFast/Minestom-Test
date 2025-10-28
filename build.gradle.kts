@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.anonymouslyfast"
-version = "1.0-SNAPSHOT"
+version = "0"
 
 repositories {
     mavenCentral()
