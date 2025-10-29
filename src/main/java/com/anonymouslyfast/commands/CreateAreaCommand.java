@@ -10,14 +10,25 @@ import net.minestom.server.instance.block.Block;
 
 public class CreateAreaCommand extends Command {
 
+    private enum AreaTypes {
+            box,
+            cube,
+            cuboid,
+            line,
+            section,
+            single,
+            sphere
+    }
+
     public CreateAreaCommand() {
         super("createarea", "ca");
 
         // Set the callback function if no argument is sent.
         setDefaultExecutor((sender, context) -> sender.sendMessage(helpMsg));
 
-        // Creates the argument with id 'argument' (Will appear above arg in chat like <argument>)
+        // Creates the arguments
         var stringArg = ArgumentType.String("argument");
+        var areaTypeArg = ArgumentType.Enum("shape", AreaTypes.class);
 
         // Create functionality of the argument
         addSyntax((sender, context) -> {
@@ -30,37 +41,45 @@ public class CreateAreaCommand extends Command {
                 case "help":
                     sender.sendMessage(helpMsg);
                     break;
-                default:
-                    Area selectedArea;
-                    int size = 2;
-                    Player player = (Player) sender;
-                    Point playerPosition = player.getPosition();
-                    Point sizePoint = new Vec(size); // default size will change to be an arg once learned.
-                    if (argument.equalsIgnoreCase("box")) {
-                        selectedArea = Area.box(playerPosition, sizePoint);
-                    } else if (argument.equalsIgnoreCase("cube")) {
-                        selectedArea = Area.cube(playerPosition, size);
-                    } else if (argument.equalsIgnoreCase("cuboid")) {
-                        selectedArea = Area.cuboid(sizePoint, playerPosition); // can change later, will require more args.
-                    } else if (argument.equalsIgnoreCase("line")) {
-                        selectedArea = Area.line(playerPosition, sizePoint);
-                    }  else if (argument.equalsIgnoreCase("section")) {
-                        selectedArea = Area.section(playerPosition.sectionX() + 1,
-                                playerPosition.sectionY() + 2, playerPosition.sectionZ() +3);
-                    } else if (argument.equalsIgnoreCase("single")) {
-                        selectedArea = Area.single(playerPosition);
-                    } else if (argument.equalsIgnoreCase("sphere")) {
-                        selectedArea = Area.sphere(playerPosition.add(new Vec(2)), size);
-                    } else {
-                        sender.sendMessage(listMsg);
-                        return;
-                    }
-
-                    // Creating the shape
-                    player.getInstance().setBlockArea(selectedArea, Block.COBBLESTONE);
-                    break;
             }
         }, stringArg);
+
+        addSyntax((sender, context) -> {
+            final AreaTypes shape = context.get(areaTypeArg);
+            Area selectedArea;
+            int size = 2;
+            Player player = (Player) sender;
+            Point playerPosition = player.getPosition();
+            Point sizePoint = new Vec(size); // default size will change to be an arg once learned.
+            switch(shape) {
+                case box:
+                    selectedArea = Area.box(playerPosition, sizePoint);
+                    break;
+                case cube:
+                    selectedArea = Area.cube(playerPosition, size);
+                    break;
+                case cuboid:
+                    selectedArea = Area.cuboid(playerPosition, sizePoint);
+                    break;
+                case line:
+                    selectedArea = Area.line(playerPosition, sizePoint);
+                    break;
+                case section:
+                    selectedArea = Area.section(playerPosition.sectionX() + 1,
+                            playerPosition.sectionY() + 2, playerPosition.sectionZ() +3);
+                    break;
+                case single:
+                    selectedArea = Area.single(playerPosition);
+                    break;
+                case sphere:
+                    selectedArea = Area.sphere(playerPosition.add(new Vec(2)), size);
+                    break;
+                default:
+                    sender.sendMessage(listMsg);
+                    return;
+            }
+            player.getInstance().setBlockArea(selectedArea, Block.COBBLESTONE);
+        }, areaTypeArg);
     }
 
     private final String[] helpMsg = new String[]{
