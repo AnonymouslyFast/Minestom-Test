@@ -30,22 +30,10 @@ public class CreateAreaCommand extends Command {
         var stringArg = ArgumentType.String("argument");
         var areaTypeArg = ArgumentType.Enum("shape", AreaTypes.class);
 
-        // Create functionality of the argument
-        addSyntax((sender, context) -> {
-            final String argument = context.get(stringArg); // Gets the string arg by identifier
-
-            switch (argument) {
-                case "list":
-                    sender.sendMessage(listMsg);
-                    break;
-                case "help":
-                    sender.sendMessage(helpMsg);
-                    break;
-            }
-        }, stringArg);
-
+        // Create functionality of the shape arguments.
         addSyntax((sender, context) -> {
             final AreaTypes shape = context.get(areaTypeArg);
+            System.out.println(shape.toString());
             Area selectedArea;
             int size = 2;
             Player player = (Player) sender;
@@ -80,7 +68,23 @@ public class CreateAreaCommand extends Command {
             }
             player.getInstance().setBlockArea(selectedArea, Block.COBBLESTONE);
         }, areaTypeArg);
+
+        // Create functionality of the string arguments
+        addSyntax((sender, context) -> {
+            final String argument = context.get(stringArg); // Gets the string arg by identifier
+            switch (argument) {
+                case "list":
+                    sender.sendMessage(listMsg);
+                    break;
+                case "help":
+                    sender.sendMessage(helpMsg);
+                    break;
+                default:
+                    sender.sendMessage(helpMsg);
+            }
+        }, stringArg);
     }
+
 
     private final String[] helpMsg = new String[]{
             "== Create Area Help ==",
