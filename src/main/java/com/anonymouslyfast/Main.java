@@ -1,6 +1,9 @@
 package com.anonymouslyfast;
 
+import com.anonymouslyfast.commands.CreateAreaCommand;
+import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.command.CommandManager;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
@@ -31,6 +34,7 @@ public class Main {
             unit.modifier().fillHeight(3, 4, Block.GRASS_BLOCK);
         });
 
+
         // Adding lightning
         instanceContainer.setChunkSupplier(LightingChunk::new);
 
@@ -41,6 +45,9 @@ public class Main {
             event.setSpawningInstance(instanceContainer);
             player.setRespawnPoint(spawningPosition);
         });
+
+        CommandManager commandManager = MinecraftServer.getCommandManager();
+        commandManager.register(new CreateAreaCommand());
 
 
         server.start("0.0.0.0", 25565); // Starts on localhost with default mc port.
